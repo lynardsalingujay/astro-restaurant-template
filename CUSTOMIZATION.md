@@ -41,6 +41,7 @@ accent: {
 ### Color Palette Tools
 
 Generate color palettes easily:
+
 - [Tailwind Color Generator](https://uicolors.app/create)
 - [Coolors](https://coolors.co/)
 - [Adobe Color](https://color.adobe.com/)
@@ -48,6 +49,7 @@ Generate color palettes easily:
 ### Example Color Schemes
 
 **Warm Restaurant:**
+
 ```javascript
 primary: {
   // Orange/Amber tones
@@ -57,6 +59,7 @@ primary: {
 ```
 
 **Upscale/Fine Dining:**
+
 ```javascript
 primary: {
   // Deep purple/gold
@@ -66,6 +69,7 @@ primary: {
 ```
 
 **Fresh/Healthy:**
+
 ```javascript
 primary: {
   // Green tones
@@ -81,12 +85,14 @@ primary: {
 The template uses **Inter** font by default. To change:
 
 1. **Choose a Google Font:**
+
    - Visit [Google Fonts](https://fonts.google.com/)
    - Select your font (e.g., "Poppins", "Montserrat", "Roboto")
 
 2. **Update the font link** in all page files (`src/pages/*.astro`):
 
    Find:
+
    ```html
    <link
      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
@@ -95,6 +101,7 @@ The template uses **Inter** font by default. To change:
    ```
 
    Replace with your font:
+
    ```html
    <link
      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap"
@@ -105,13 +112,15 @@ The template uses **Inter** font by default. To change:
 3. **Update the font-family** in the body tag:
 
    Find:
+
    ```html
-   <body class="font-['Inter'] bg-slate-50">
+   <body class="font-['Inter'] bg-slate-50"></body>
    ```
 
    Replace with:
+
    ```html
-   <body class="font-['Poppins'] bg-slate-50">
+   <body class="font-['Poppins'] bg-slate-50"></body>
    ```
 
 ### Custom Fonts
@@ -129,12 +138,14 @@ To use custom fonts (not from Google):
 Replace "Restaurant Name" throughout the project:
 
 **Global Find & Replace:**
+
 ```
 Find: Restaurant Name
 Replace: Your Restaurant Name
 ```
 
 Files to update:
+
 - `src/pages/index.astro`
 - `src/pages/menu.astro`
 - `src/pages/about.astro`
@@ -152,6 +163,7 @@ Edit navigation in all pages:
 ```
 
 Add custom pages:
+
 ```html
 <a href="/reservations" class="...">Reservations</a>
 <a href="/events" class="...">Events</a>
@@ -217,6 +229,7 @@ Replace the SVG placeholders with your images:
 - `public/placeholders/about.svg` → About page image
 
 **Image Recommendations:**
+
 - Use high-quality photos (1920px width for hero)
 - Optimize images before uploading (use [TinyPNG](https://tinypng.com/))
 - Use consistent aspect ratios
@@ -226,7 +239,10 @@ Replace the SVG placeholders with your images:
 To add background images to sections:
 
 ```html
-<section class="py-20 bg-cover bg-center" style="background-image: url('/your-image.jpg');">
+<section
+  class="py-20 bg-cover bg-center"
+  style="background-image: url('/your-image.jpg');"
+>
   <div class="bg-black bg-opacity-50">
     <!-- Your content with overlay -->
   </div>
@@ -244,18 +260,21 @@ To add background images to sections:
 3. **Update `src/pages/contact.astro`:**
 
    Find:
+
    ```html
-   <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+   <form action="https://formspree.io/f/YOUR_FORM_ID" method="POST"></form>
    ```
 
    Replace `YOUR_FORM_ID` with your actual ID:
+
    ```html
-   <form action="https://formspree.io/f/xyzabc123" method="POST">
+   <form action="https://formspree.io/f/xyzabc123" method="POST"></form>
    ```
 
 ### Alternative Form Services
 
 **EmailJS:**
+
 ```html
 <form id="contact-form">
   <!-- Add EmailJS script and configuration -->
@@ -263,6 +282,7 @@ To add background images to sections:
 ```
 
 **Netlify Forms:**
+
 ```html
 <form name="contact" method="POST" data-netlify="true">
   <input type="hidden" name="form-name" value="contact" />
@@ -275,6 +295,7 @@ To add background images to sections:
 Add a real map to the contact page:
 
 1. **Get Google Maps embed code:**
+
    - Visit [Google Maps](https://www.google.com/maps)
    - Search for your location
    - Click "Share" → "Embed a map"
@@ -304,12 +325,18 @@ Add social media icons to the footer:
 <div>
   <h4 class="text-xl font-semibold mb-4">Follow Us</h4>
   <div class="flex gap-4">
-    <a href="https://facebook.com/yourpage" class="text-slate-200 hover:text-accent-400">
+    <a
+      href="https://facebook.com/yourpage"
+      class="text-slate-200 hover:text-accent-400"
+    >
       <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
         <!-- Facebook icon SVG path -->
       </svg>
     </a>
-    <a href="https://instagram.com/yourpage" class="text-slate-200 hover:text-accent-400">
+    <a
+      href="https://instagram.com/yourpage"
+      class="text-slate-200 hover:text-accent-400"
+    >
       <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
         <!-- Instagram icon SVG path -->
       </svg>
@@ -319,6 +346,7 @@ Add social media icons to the footer:
 ```
 
 Use icon libraries:
+
 - [Heroicons](https://heroicons.com/)
 - [Font Awesome](https://fontawesome.com/)
 - [Simple Icons](https://simpleicons.org/)
@@ -346,22 +374,22 @@ Add structured data for restaurants:
 
 ```html
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Restaurant",
-  "name": "Your Restaurant Name",
-  "image": "https://yourwebsite.com/logo.png",
-  "address": {
-    "@type": "PostalAddress",
-    "streetAddress": "123 Main Street",
-    "addressLocality": "City",
-    "addressRegion": "ST",
-    "postalCode": "12345"
-  },
-  "telephone": "+1-555-123-4567",
-  "servesCuisine": "Italian, American",
-  "priceRange": "$$"
-}
+  {
+    "@context": "https://schema.org",
+    "@type": "Restaurant",
+    "name": "Your Restaurant Name",
+    "image": "https://yourwebsite.com/logo.png",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "123 Main Street",
+      "addressLocality": "City",
+      "addressRegion": "ST",
+      "postalCode": "12345"
+    },
+    "telephone": "+1-555-123-4567",
+    "servesCuisine": "Italian, American",
+    "priceRange": "$$"
+  }
 </script>
 ```
 
@@ -405,6 +433,7 @@ Use this checklist when setting up a new restaurant site:
 ### Modify Menu Card Style
 
 Edit `src/components/SimpleMenuCard.astro` to change:
+
 - Card layout
 - Badge styles
 - Hover effects

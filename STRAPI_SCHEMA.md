@@ -28,23 +28,23 @@ First, create a component for the hero section:
 4. Name: `hero-section`
 5. Add the following fields:
 
-| Field Name | Type | Required | Description |
-|------------|------|----------|-------------|
-| `heroTitle` | Text (Short) | Yes | Main hero heading |
-| `heroSubtitle` | Text (Long) | Yes | Hero subtitle/description |
-| `heroImage` | Media (Single) | No | Hero background image |
-| `primaryCtaText` | Text (Short) | No | Primary button text |
-| `primaryCtaLink` | Text (Short) | No | Primary button URL |
-| `secondaryCtaText` | Text (Short) | No | Secondary button text |
-| `secondaryCtaLink` | Text (Short) | No | Secondary button URL |
+| Field Name         | Type           | Required | Description               |
+| ------------------ | -------------- | -------- | ------------------------- |
+| `heroTitle`        | Text (Short)   | Yes      | Main hero heading         |
+| `heroSubtitle`     | Text (Long)    | Yes      | Hero subtitle/description |
+| `heroImage`        | Media (Single) | No       | Hero background image     |
+| `primaryCtaText`   | Text (Short)   | No       | Primary button text       |
+| `primaryCtaLink`   | Text (Short)   | No       | Primary button URL        |
+| `secondaryCtaText` | Text (Short)   | No       | Secondary button text     |
+| `secondaryCtaLink` | Text (Short)   | No       | Secondary button URL      |
 
 ### Homepage Fields
 
 Add the following field to the Homepage single type:
 
-| Field Name | Type | Required | Description |
-|------------|------|----------|-------------|
-| `heroSection` | Component (sections.hero-section) | Yes | Hero section data |
+| Field Name    | Type                              | Required | Description       |
+| ------------- | --------------------------------- | -------- | ----------------- |
+| `heroSection` | Component (sections.hero-section) | Yes      | Hero section data |
 
 ### Example Content
 
@@ -81,38 +81,44 @@ If you want to categorize menu items by cuisine type:
 
 ### Menu Item Fields
 
-| Field Name | Type | Required | Description |
-|------------|------|----------|-------------|
-| `name` | Text (Short) | Yes | Dish name |
-| `description` | Text (Long) | Yes | Dish description |
-| `price` | Number (Decimal) | Yes | Price in dollars |
-| `image` | Media (Single) | No | Dish image |
-| `isMadeToOrder` | Boolean | No | Whether dish is made to order |
-| `cuisine` | Relation | No | Many-to-One relation with Cuisine |
+| Field Name      | Type             | Required | Description                       |
+| --------------- | ---------------- | -------- | --------------------------------- |
+| `name`          | Text (Short)     | Yes      | Dish name                         |
+| `description`   | Text (Long)      | Yes      | Dish description                  |
+| `price`         | Number (Decimal) | Yes      | Price in dollars                  |
+| `image`         | Media (Single)   | No       | Dish image                        |
+| `isMadeToOrder` | Boolean          | No       | Whether dish is made to order     |
+| `cuisine`       | Relation         | No       | Many-to-One relation with Cuisine |
 
 ### Field Settings
 
 **name:**
+
 - Max length: 100 characters
 - Required
 
 **description:**
+
 - Max length: 500 characters
 - Required
 
 **price:**
+
 - Number format: Decimal
 - Min: 0
 - Required
 
 **image:**
+
 - Allowed types: Images only (JPEG, PNG, WebP, SVG)
 - Single media
 
 **isMadeToOrder:**
+
 - Default value: false
 
 **cuisine:**
+
 - Relation type: Menu Item has one Cuisine
 - Display field: name
 
@@ -165,11 +171,13 @@ If using `STRAPI_API_TOKEN`:
 ### Image Recommendations
 
 **Hero Image:**
+
 - Resolution: 1920x1080 or higher
 - Format: JPEG or WebP
 - Max size: 2MB
 
 **Menu Item Images:**
+
 - Resolution: 800x800 (square) or 1200x800 (landscape)
 - Format: JPEG or WebP
 - Max size: 1MB each
@@ -187,28 +195,32 @@ Configure in Strapi's `config/plugins.js` file.
 ## 🧪 Testing Your Setup
 
 1. **Create content in Strapi:**
+
    - Fill in the Homepage single type
    - Add at least 3-4 menu items
 
 2. **Test API endpoints:**
-   
+
    Homepage:
+
    ```
    GET https://your-strapi.com/api/homepage?populate[heroSection][populate]=heroImage
    ```
 
    Menu Items:
+
    ```
    GET https://your-strapi.com/api/menu-items?populate[image][fields][0]=url&populate[cuisine][fields][0]=name
    ```
 
 3. **Use the debug page:**
-   
+
    Start your Astro dev server and visit:
+
    ```
    http://localhost:4321/debug
    ```
-   
+
    This shows the raw Strapi API response to help troubleshoot.
 
 ## 🔄 Content Workflow

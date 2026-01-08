@@ -1,15 +1,15 @@
 // Strapi API Configuration
 // Validate that STRAPI_URL is set at build time
-if (!import.meta.env.PUBLIC_STRAPI_URL) {
-  throw new Error(
-    '❌ STRAPI_URL validation failed: PUBLIC_STRAPI_URL environment variable is required.\n' +
-    'Please set it in your .env file or build environment.\n' +
+const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL;
+const STRAPI_TOKEN = import.meta.env.STRAPI_API_TOKEN;
+
+if (!STRAPI_URL) {
+  console.warn(
+    '⚠️  PUBLIC_STRAPI_URL not set - using placeholder content for preview.\n' +
+    'Set PUBLIC_STRAPI_URL in your .env file to fetch real content from Strapi.\n' +
     'Example: PUBLIC_STRAPI_URL=https://your-strapi-instance.com'
   );
 }
-
-const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL;
-const STRAPI_TOKEN = import.meta.env.STRAPI_API_TOKEN;
 
 // TypeScript Interfaces
 export interface StrapiImageFormat {
@@ -105,6 +105,9 @@ export interface HomepageResponse {
 }
 
 export async function fetchStrapi<T = MenuItem>(endpoint: string): Promise<StrapiResponse<T>> {
+  if (!STRAPI_URL) {
+    return { data: [], meta: {} };
+  }
   const url = `${STRAPI_URL}/api/${endpoint}?populate[image][fields][0]=url&populate[image][fields][1]=alternativeText&populate[image][fields][2]=formats&populate[cuisine][fields][0]=name`;
   
   try {
@@ -143,12 +146,16 @@ export async function fetchStrapi<T = MenuItem>(endpoint: string): Promise<Strap
     if (import.meta.env.DEV) {
       console.error('Strapi fetch error:', error);
     }
-    throw error;
+    // Return empty data instead of throwing - allows graceful fallback
+    return { data: [], meta: {} };
   }
 }
 
 // Fetch single type (like homepage)
 export async function fetchStrapiSingle(endpoint: string): Promise<HomepageResponse> {
+  if (!STRAPI_URL) {
+    return { data: null, meta: {} };
+  }
   const url = `${STRAPI_URL}/api/${endpoint}?populate[heroSection][populate]=heroImage`;
   
   try {
@@ -184,7 +191,8 @@ export async function fetchStrapiSingle(endpoint: string): Promise<HomepageRespo
     if (import.meta.env.DEV) {
       console.error('Strapi fetch error:', error);
     }
-    throw error;
+    // Return null data instead of throwing - allows graceful fallback
+    return { data: null, meta: {} };
   }
 }
 

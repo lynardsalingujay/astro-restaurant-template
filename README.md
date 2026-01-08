@@ -25,25 +25,31 @@ A production-ready, fully-featured Astro template for restaurant, cafe, bakery, 
 ### Installation
 
 1. **Clone this repository**
+
    ```bash
    git clone <your-repo-url>
    cd astro-restaurant-template
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
-   
+
    Create a `.env` file in the root directory:
+
    ```env
    PUBLIC_STRAPI_URL=https://your-strapi-instance.com
    STRAPI_API_TOKEN=your-optional-api-token
    ```
 
+   ⚠️ **Important:** The `PUBLIC_STRAPI_URL` environment variable is **required** for builds to succeed. Without it, `npm run build` will fail with an error. Make sure you have a running Strapi instance before building.
+
 4. **Run the development server**
+
    ```bash
    npm run dev
    ```
@@ -51,6 +57,7 @@ A production-ready, fully-featured Astro template for restaurant, cafe, bakery, 
    Visit `http://localhost:4321` to see your site!
 
 5. **Build for production**
+
    ```bash
    npm run build
    ```
@@ -117,10 +124,34 @@ See [CUSTOMIZATION.md](CUSTOMIZATION.md) for a complete guide on customizing:
 
 ## 🔧 Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `PUBLIC_STRAPI_URL` | Yes | Your Strapi instance URL (e.g., `https://your-strapi.com`) |
-| `STRAPI_API_TOKEN` | No | API token if your Strapi requires authentication |
+| Variable            | Required | Description                                                |
+| ------------------- | -------- | ---------------------------------------------------------- |
+| `PUBLIC_STRAPI_URL` | Yes      | Your Strapi instance URL (e.g., `https://your-strapi.com`) |
+| `STRAPI_API_TOKEN`  | No       | API token if your Strapi requires authentication           |
+
+## 🎨 Placeholder Content
+
+This template includes placeholder content that should be customized before deployment:
+
+### Images
+
+- `public/placeholders/hero.svg` - Homepage hero section image
+- `public/placeholders/about.svg` - About page image
+- `public/placeholders/dish-1.svg` to `dish-4.svg` - Menu item placeholder images
+
+### Text Content
+
+- **"Restaurant Name"** - Appears in navigation, footer, and page titles across all pages (13 instances)
+- **Contact Information:**
+  - Email: `info@restaurant.com`
+  - Phone: `(555) 123-4567`
+  - Address: `123 Main Street, City, ST 12345`
+- **About Page:** `[Year]` placeholder in "Founded in [Year]" text
+- **Contact Page:**
+  - `YOUR_FORM_ID` in Formspree form action URL
+  - `[Map Placeholder - Add Google Maps embed or similar]` text
+
+See [CUSTOMIZATION.md](CUSTOMIZATION.md) for detailed instructions on replacing all placeholder content.
 
 ## 📦 Build Process
 

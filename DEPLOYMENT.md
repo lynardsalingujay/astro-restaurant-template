@@ -33,6 +33,7 @@ Before deploying:
 ### Vercel (Recommended)
 
 **Why Vercel?**
+
 - Zero configuration for Astro
 - Automatic deployments from Git
 - Fast global CDN
@@ -46,11 +47,13 @@ Before deploying:
 2. **Visit [vercel.com](https://vercel.com)** and sign in
 
 3. **Import your repository:**
+
    - Click "Add New Project"
    - Select your repository
    - Vercel auto-detects Astro
 
 4. **Configure environment variables:**
+
    - Add `PUBLIC_STRAPI_URL`
    - Add `STRAPI_API_TOKEN` (if needed)
 
@@ -60,6 +63,7 @@ Before deploying:
    - Your site is live!
 
 **Custom Domain:**
+
 - Go to Project Settings → Domains
 - Add your domain and follow DNS instructions
 
@@ -72,15 +76,18 @@ Before deploying:
 2. **Visit [netlify.com](https://netlify.com)** and sign in
 
 3. **New site from Git:**
+
    - Click "Add new site" → "Import an existing project"
    - Connect to your Git provider
    - Select your repository
 
 4. **Build settings:**
+
    - Build command: `npm run build`
    - Publish directory: `dist`
 
 5. **Environment variables:**
+
    - Go to Site settings → Environment variables
    - Add `PUBLIC_STRAPI_URL`
    - Add `STRAPI_API_TOKEN` (if needed)
@@ -105,16 +112,18 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
 **Steps:**
 
 1. **Install GitHub Pages adapter:**
+
    ```bash
    npm install @astrojs/github-pages
    ```
 
 2. **Update `astro.config.mjs`:**
+
    ```javascript
    export default defineConfig({
-     output: 'static',
-     site: 'https://yourusername.github.io',
-     base: '/your-repo-name',
+     output: "static",
+     site: "https://yourusername.github.io",
+     base: "/your-repo-name",
      // ... rest of config
    });
    ```
@@ -122,12 +131,13 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
 3. **Create GitHub Actions workflow:**
 
    Create `.github/workflows/deploy.yml`:
+
    ```yaml
    name: Deploy to GitHub Pages
 
    on:
      push:
-       branches: [ main ]
+       branches: [main]
      workflow_dispatch:
 
    permissions:
@@ -141,21 +151,21 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
        steps:
          - name: Checkout
            uses: actions/checkout@v3
-         
+
          - name: Setup Node
            uses: actions/setup-node@v3
            with:
              node-version: 18
-         
+
          - name: Install dependencies
            run: npm ci
-         
+
          - name: Build
            env:
              PUBLIC_STRAPI_URL: ${{ secrets.PUBLIC_STRAPI_URL }}
              STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
            run: npm run build
-         
+
          - name: Upload artifact
            uses: actions/upload-pages-artifact@v1
            with:
@@ -174,11 +184,13 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
    ```
 
 4. **Configure GitHub repository:**
+
    - Settings → Secrets → Actions
    - Add `PUBLIC_STRAPI_URL`
    - Add `STRAPI_API_TOKEN`
 
 5. **Enable GitHub Pages:**
+
    - Settings → Pages
    - Source: GitHub Actions
 
@@ -193,14 +205,17 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
 2. **Visit [pages.cloudflare.com](https://pages.cloudflare.com)**
 
 3. **Create a new project:**
+
    - Connect to Git
    - Select your repository
 
 4. **Build settings:**
+
    - Build command: `npm run build`
    - Build output directory: `dist`
 
 5. **Environment variables:**
+
    - Add `PUBLIC_STRAPI_URL`
    - Add `STRAPI_API_TOKEN`
 
@@ -217,6 +232,7 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
 3. **Connect repository**
 
 4. **Configure:**
+
    - Build command: `npm run build`
    - Output directory: `dist`
 
@@ -229,17 +245,20 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
 **For advanced users:**
 
 1. **Build locally:**
+
    ```bash
    npm run build
    ```
 
 2. **Create S3 bucket:**
+
    - Enable static website hosting
    - Set bucket policy for public read
 
 3. **Upload `dist/` folder to S3**
 
 4. **Create CloudFront distribution:**
+
    - Origin: Your S3 bucket
    - Configure caching
    - Add SSL certificate
@@ -253,6 +272,7 @@ If using Netlify forms instead of Formspree, update `contact.astro`:
 **Option 1: Webhook from Strapi**
 
 1. **Create webhook in Strapi:**
+
    - Settings → Webhooks
    - URL: Your deployment platform's webhook URL
    - Events: `entry.create`, `entry.update`, `entry.delete`
@@ -268,7 +288,7 @@ Use GitHub Actions cron:
 ```yaml
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours
+    - cron: "0 */6 * * *" # Every 6 hours
 ```
 
 ## 🌐 Custom Domain Setup
@@ -278,6 +298,7 @@ on:
 For most platforms:
 
 1. **Add A record:**
+
    ```
    Type: A
    Name: @
@@ -300,6 +321,7 @@ All recommended platforms provide free SSL certificates automatically.
 ### Image Optimization
 
 Already handled at build time! Images are:
+
 - Downloaded locally
 - Served from your static host
 - Cached by CDN
@@ -311,6 +333,7 @@ Already handled at build time! Images are:
 
 2. **Compression:**
    Enable gzip/brotli on your host:
+
    - Vercel/Netlify: Automatic
    - Cloudflare: Enable in settings
 
@@ -320,7 +343,7 @@ Already handled at build time! Images are:
    ```
    /*
      Cache-Control: public, max-age=31536000, immutable
-   
+
    /*.html
      Cache-Control: public, max-age=0, must-revalidate
    ```
@@ -333,12 +356,17 @@ Add to all pages in `<head>`:
 
 ```html
 <!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+<script
+  async
+  src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"
+></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'GA_MEASUREMENT_ID');
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+  gtag("js", new Date());
+  gtag("config", "GA_MEASUREMENT_ID");
 </script>
 ```
 
@@ -359,14 +387,17 @@ For production error monitoring:
 ### Build Fails
 
 **Error: "PUBLIC_STRAPI_URL is required"**
+
 - Add environment variable to your hosting platform
 
 **Error: "Failed to fetch from Strapi"**
+
 - Verify Strapi is accessible from build server
 - Check API permissions in Strapi
 - Test Strapi URL in browser
 
 **Error: "Image download failed"**
+
 - Check Strapi media library permissions
 - Verify images are published
 - Test image URLs directly
@@ -374,11 +405,13 @@ For production error monitoring:
 ### Site Not Updating
 
 **Content changes not visible:**
+
 - Trigger a new build (content is fetched at build time)
 - Clear CDN cache if available
 - Check Strapi content is published
 
 **CSS not applying:**
+
 - Clear browser cache
 - Verify Tailwind classes are correct
 - Check build completed successfully
@@ -400,13 +433,13 @@ After deploying:
 
 ## 🚀 Quick Deploy Comparison
 
-| Platform | Setup Time | Free Tier | Auto Deploy | Custom Domain | Best For |
-|----------|-----------|-----------|-------------|---------------|----------|
-| Vercel | 5 min | Yes | Yes | Yes | Fast & easy |
-| Netlify | 5 min | Yes | Yes | Yes | Feature-rich |
-| GitHub Pages | 10 min | Yes | Yes | Yes | GitHub users |
-| Cloudflare | 5 min | Yes | Yes | Yes | Speed focused |
-| DigitalOcean | 10 min | No | Yes | Yes | Full control |
+| Platform     | Setup Time | Free Tier | Auto Deploy | Custom Domain | Best For      |
+| ------------ | ---------- | --------- | ----------- | ------------- | ------------- |
+| Vercel       | 5 min      | Yes       | Yes         | Yes           | Fast & easy   |
+| Netlify      | 5 min      | Yes       | Yes         | Yes           | Feature-rich  |
+| GitHub Pages | 10 min     | Yes       | Yes         | Yes           | GitHub users  |
+| Cloudflare   | 5 min      | Yes       | Yes         | Yes           | Speed focused |
+| DigitalOcean | 10 min     | No        | Yes         | Yes           | Full control  |
 
 ---
 
