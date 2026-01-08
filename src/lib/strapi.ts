@@ -1,14 +1,19 @@
 // Strapi API Configuration
-// Validate that STRAPI_URL is set at build time
+// This module implements a resilient Strapi integration that ensures the website
+// remains functional even when Strapi CMS is down or unavailable.
+
 const STRAPI_URL = import.meta.env.PUBLIC_STRAPI_URL;
 const STRAPI_TOKEN = import.meta.env.STRAPI_API_TOKEN;
 
+// Log configuration status
 if (!STRAPI_URL) {
   console.warn(
     '⚠️  PUBLIC_STRAPI_URL not set - using placeholder content for preview.\n' +
     'Set PUBLIC_STRAPI_URL in your .env file to fetch real content from Strapi.\n' +
     'Example: PUBLIC_STRAPI_URL=https://your-strapi-instance.com'
   );
+} else {
+  console.log(`✓ Strapi URL configured: ${STRAPI_URL}`);
 }
 
 // TypeScript Interfaces
@@ -105,9 +110,14 @@ export interface HomepageResponse {
 }
 
 export async function fetchStrapi<T = MenuItem>(endpoint: string): Promise<StrapiResponse<T>> {
+  // If no Strapi URL configured, return empty data immediately
   if (!STRAPI_URL) {
+    if (import.meta.env.DEV) {
+      console.log(`ℹ️  Strapi not configured - returning empty data for ${endpoint}`);
+    }
     return { data: [], meta: {} };
   }
+
   const url = `${STRAPI_URL}/api/${endpoint}?populate[image][fields][0]=url&populate[image][fields][1]=alternativeText&populate[image][fields][2]=formats&populate[cuisine][fields][0]=name`;
   
   try {
@@ -120,32 +130,46 @@ export async function fetchStrapi<T = MenuItem>(endpoint: string): Promise<Strap
       headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
     }
     
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { 
+      headers,
+      // Add timeout to prevent hanging
+      signal: AbortSignal.timeout(10000), // 10 second timeout
+    });
     
     if (!response.ok) {
       // Provide specific error messages based on status code
+      let errorMessage = `Failed to fetch from Strapi: ${response.statusText}`;
+      
       if (response.status === 404) {
-        throw new Error(`Endpoint not found: ${endpoint}`);
+        errorMessage = `Endpoint not found: ${endpoint}`;
+      } else if (response.status === 401) {
+        errorMessage = 'Authentication required. Please check your API token.';
+      } else if (response.status === 403) {
+        errorMessage = 'Access forbidden. Your API token may not have the required permissions.';
+      } else if (response.status >= 500) {
+        errorMessage = 'Strapi server error. Please try again later.';
       }
-      if (response.status === 401) {
-        throw new Error('Authentication required. Please check your API token.');
-      }
-      if (response.status === 403) {
-        throw new Error('Access forbidden. Your API token may not have the required permissions.');
-      }
-      if (response.status >= 500) {
-        throw new Error('Strapi server error. Please try again later.');
-      }
-      throw new Error(`Failed to fetch from Strapi: ${response.statusText}`);
+      
+      throw new Error(errorMessage);
     }
     
     const data = await response.json();
+    
+    if (import.meta.env.DEV) {
+      console.log(`✓ Successfully fetched ${data?.data?.length || 0} items from ${endpoint}`);
+    }
+    
     return data;
   } catch (error) {
-    // Only log in development mode
+    // Log detailed error in development, minimal in production
     if (import.meta.env.DEV) {
-      console.error('Strapi fetch error:', error);
+      console.error(`❌ Strapi fetch error for ${endpoint}:`, error);
+      console.log('→ Returning empty data - pages will use fallback content');
+    } else {
+      // In production, just log that we're using fallback
+      console.log(`Using fallback content for ${endpoint} (Strapi unavailable)`);
     }
+    
     // Return empty data instead of throwing - allows graceful fallback
     return { data: [], meta: {} };
   }
@@ -153,9 +177,14 @@ export async function fetchStrapi<T = MenuItem>(endpoint: string): Promise<Strap
 
 // Fetch single type (like homepage)
 export async function fetchStrapiSingle(endpoint: string): Promise<HomepageResponse> {
+  // If no Strapi URL configured, return null data immediately
   if (!STRAPI_URL) {
+    if (import.meta.env.DEV) {
+      console.log(`ℹ️  Strapi not configured - returning null data for ${endpoint}`);
+    }
     return { data: null, meta: {} };
   }
+
   const url = `${STRAPI_URL}/api/${endpoint}?populate[heroSection][populate]=heroImage`;
   
   try {
@@ -167,86 +196,128 @@ export async function fetchStrapiSingle(endpoint: string): Promise<HomepageRespo
       headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
     }
     
-    const response = await fetch(url, { headers });
+    const response = await fetch(url, { 
+      headers,
+      // Add timeout to prevent hanging
+      signal: AbortSignal.timeout(10000), // 10 second timeout
+    });
     
     if (!response.ok) {
+      let errorMessage = `Failed to fetch ${endpoint}: ${response.statusText}`;
+      
       if (response.status === 404) {
-        throw new Error(`Endpoint not found: ${endpoint}`);
+        errorMessage = `Endpoint not found: ${endpoint}`;
+      } else if (response.status === 401) {
+        errorMessage = 'Authentication required. Please check your API token.';
+      } else if (response.status === 403) {
+        errorMessage = 'Access forbidden. Your API token may not have the required permissions.';
+      } else if (response.status >= 500) {
+        errorMessage = 'Strapi server error. Please try again later.';
       }
-      if (response.status === 401) {
-        throw new Error('Authentication required. Please check your API token.');
-      }
-      if (response.status === 403) {
-        throw new Error('Access forbidden. Your API token may not have the required permissions.');
-      }
-      if (response.status >= 500) {
-        throw new Error('Strapi server error. Please try again later.');
-      }
-      throw new Error(`Failed to fetch ${endpoint}: ${response.statusText}`);
+      
+      throw new Error(errorMessage);
     }
     
     const data = await response.json();
+    
+    if (import.meta.env.DEV) {
+      console.log(`✓ Successfully fetched ${endpoint}`);
+    }
+    
     return data;
   } catch (error) {
+    // Log detailed error in development, minimal in production
     if (import.meta.env.DEV) {
-      console.error('Strapi fetch error:', error);
+      console.error(`❌ Strapi fetch error for ${endpoint}:`, error);
+      console.log('→ Returning null data - pages will use fallback content');
+    } else {
+      console.log(`Using fallback content for ${endpoint} (Strapi unavailable)`);
     }
+    
     // Return null data instead of throwing - allows graceful fallback
     return { data: null, meta: {} };
   }
 }
 
 // Download image from Strapi and save it locally during build
+// This ensures images are cached and the site works even when Strapi is down
 export async function downloadStrapiImage(url: string | undefined | null): Promise<string | null> {
-  if (!url) return null;
+  if (!url) {
+    if (import.meta.env.DEV) {
+      console.log('ℹ️  No image URL provided, returning null');
+    }
+    return null;
+  }
+  
+  // If it's already a local path (starts with /), return it as-is
+  if (url.startsWith('/')) {
+    return url;
+  }
   
   // If it's a relative URL, make it absolute
   const fullUrl = url.startsWith('http') ? url : `${STRAPI_URL}${url}`;
   
-  // Extract filename from URL
-  const urlPath = new URL(fullUrl).pathname;
-  const filename = urlPath.split('/').pop();
-  
-  if (!filename) return null;
-  
-  try {
-    // Download the image
-    const response = await fetch(fullUrl);
-    if (!response.ok) {
-      console.error(`Failed to download image: ${fullUrl}`);
-      return fullUrl; // Fallback to remote URL
+  // In build mode, download and cache images locally
+  if (import.meta.env.PROD || import.meta.env.MODE === 'production') {
+    try {
+      // Extract filename from URL
+      const urlPath = new URL(fullUrl).pathname;
+      const filename = urlPath.split('/').pop();
+      
+      if (!filename) {
+        console.warn(`⚠️  Could not extract filename from URL: ${fullUrl}`);
+        return fullUrl; // Fallback to remote URL
+      }
+      
+      // Download the image
+      const response = await fetch(fullUrl);
+      if (!response.ok) {
+        console.warn(`⚠️  Failed to download image (${response.status}): ${fullUrl}`);
+        return fullUrl; // Fallback to remote URL
+      }
+      
+      // Get the image buffer
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      
+      // Create uploads directory if it doesn't exist
+      const fs = await import('fs');
+      const path = await import('path');
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
+      
+      if (!fs.existsSync(uploadsDir)) {
+        fs.mkdirSync(uploadsDir, { recursive: true });
+      }
+      
+      // Save the image
+      const localPath = path.join(uploadsDir, filename);
+      fs.writeFileSync(localPath, buffer);
+      
+      console.log(`✓ Downloaded image: ${filename}`);
+      
+      // Return the local path (relative to public folder)
+      return `/uploads/${filename}`;
+    } catch (error) {
+      console.error(`❌ Error downloading image ${fullUrl}:`, error);
+      // Fallback to remote URL on error
+      return fullUrl;
     }
-    
-    // Get the image buffer
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    
-    // Create uploads directory if it doesn't exist
-    const fs = await import('fs');
-    const path = await import('path');
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-    
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    
-    // Save the image
-    const localPath = path.join(uploadsDir, filename);
-    fs.writeFileSync(localPath, buffer);
-    
-    // Return the local path (relative to public folder)
-    return `/uploads/${filename}`;
-  } catch (error) {
-    console.error(`Error downloading image ${fullUrl}:`, error);
-    return fullUrl; // Fallback to remote URL on error
   }
+  
+  // In development mode, use remote URLs directly for faster hot reload
+  return getStrapiMedia(url);
 }
 
-export function getStrapiMedia(url: string | undefined | null) {
+export function getStrapiMedia(url: string | undefined | null): string | null {
   if (!url) return null;
   
   // If the URL is already absolute, return it
-  if (url.startsWith('http')) {
+  if (url.startsWith('http') || url.startsWith('/')) {
+    return url;
+  }
+  
+  // If no Strapi URL configured, return the path as-is
+  if (!STRAPI_URL) {
     return url;
   }
   

@@ -5,20 +5,33 @@ import {
   type MenuItem,
   type StrapiResponse,
 } from "../lib/strapi";
+import { mockMenuItems, mockHomepage } from "../lib/mockData";
 import SimpleMenuCard from "../components/SimpleMenuCard.astro";
 import Hero from "../components/Hero.astro";
 import Navigation from "../components/Navigation.astro";
 import Footer from "../components/Footer.astro";
 
-// ⚡ BUILD-TIME DATA FETCHING
+// ⚡ RESILIENT BUILD-TIME DATA FETCHING
 // All Strapi API calls execute during build (astro build), NOT at runtime.
-// If Strapi is unavailable, the build will fail loudly with clear error messages.
-// The final output is pure static HTML with embedded content.
+// If Strapi is unavailable, mock data ensures the build succeeds gracefully.
+// The final output is pure static HTML that works even if Strapi goes down.
 
-const menu = await fetchStrapi<MenuItem>("menu-items");
-const homepage = await fetchStrapiSingle("homepage");
+// Fetch real data from Strapi
+const strapiMenu = await fetchStrapi<MenuItem>("menu-items");
+const strapiHomepage = await fetchStrapiSingle("homepage");
+
+// Use Strapi data if available, otherwise fall back to mock data
+const menu = strapiMenu?.data?.length ? strapiMenu : mockMenuItems;
+const homepage = strapiHomepage?.data ? strapiHomepage : mockHomepage;
+
 const heroSection = homepage?.data?.attributes?.heroSection;
 const heroData = Array.isArray(heroSection) ? heroSection[0] : heroSection;
+
+// Get featured menu items for homepage (first 3)
+const featuredItems = menu.data.slice(0, 3);
+
+// Track if we're using mock data
+const usingMockData = !strapiMenu?.data?.length;
 ---
 
 <!doctype html>
@@ -42,17 +55,17 @@ const heroData = Array.isArray(heroSection) ? heroSection[0] : heroSection;
 
     <!-- Development Notice Banner -->
     {
-      !import.meta.env.PUBLIC_STRAPI_URL && (
-        <div class="bg-gradient-to-r from-accent-500 to-accent-600 text-white py-3 px-4">
+      usingMockData && (
+        <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white py-3 px-4">
           <div class="max-w-7xl mx-auto text-center">
             <p class="text-sm md:text-base">
-              🚀 <strong>Astro Restaurant Template - Starter Preview</strong> |
+              ℹ️ <strong>Using Mock Data</strong> | Strapi CMS is not connected.
               Configure{" "}
               <code class="bg-white/20 px-2 py-0.5 rounded">
                 PUBLIC_STRAPI_URL
               </code>{" "}
               in your <code class="bg-white/20 px-2 py-0.5 rounded">.env</code>{" "}
-              file to load dynamic content from Strapi CMS
+              file to load real content from Strapi CMS
             </p>
           </div>
         </div>
@@ -104,57 +117,24 @@ const heroData = Array.isArray(heroSection) ? heroSection[0] : heroSection;
     <section id="menu" class="py-20 bg-slate-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 class="text-4xl font-bold text-center mb-4 text-primary-700">
-          Our Menu
+          Featured Dishes
         </h2>
         <p class="text-center text-gray-600 mb-12 text-lg">
           Discover our delicious selection of signature dishes
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {menu?.data?.map((item) => <SimpleMenuCard item={item} />)}
+          {featuredItems.map((item) => <SimpleMenuCard item={item} />)}
         </div>
 
-        {
-          !menu?.data?.length && (
-            <div class="text-center">
-              <div class="bg-white rounded-lg shadow-md p-12 max-w-2xl mx-auto">
-                <div class="text-6xl mb-4">🍽️</div>
-                <h3 class="text-2xl font-bold text-primary-700 mb-3">
-                  Placeholder Menu Preview
-                </h3>
-                <p class="text-gray-600 mb-4">
-                  This is the starter template for your Astro restaurant
-                  website. Menu items will appear here once you connect to
-                  Strapi CMS.
-                </p>
-                <div class="bg-slate-50 rounded-lg p-4 text-left text-sm">
-                  <p class="font-semibold text-primary-700 mb-2">
-                    To add menu items:
-                  </p>
-                  <ol class="list-decimal list-inside space-y-1 text-gray-600">
-                    <li>Set up your Strapi CMS instance</li>
-                    <li>Create the Menu Item content type</li>
-                    <li>Add your menu items with images and descriptions</li>
-                    <li>
-                      Configure{" "}
-                      <code class="bg-white px-2 py-0.5 rounded">
-                        PUBLIC_STRAPI_URL
-                      </code>{" "}
-                      in .env
-                    </li>
-                    <li>
-                      Run{" "}
-                      <code class="bg-white px-2 py-0.5 rounded">
-                        npm run build
-                      </code>{" "}
-                      to generate your site
-                    </li>
-                  </ol>
-                </div>
-              </div>
-            </div>
-          )
-        }
+        <div class="text-center mt-12">
+          <a
+            href="/menu"
+            class="inline-block bg-primary-600 hover:bg-primary-700 text-white font-semibold px-8 py-3 rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+          >
+            View Full Menu
+          </a>
+        </div>
       </div>
     </section>
 
