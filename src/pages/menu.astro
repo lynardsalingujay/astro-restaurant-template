@@ -1,0 +1,153 @@
+---
+import {
+  fetchStrapi,
+  type MenuItem,
+  type StrapiResponse,
+} from "../lib/strapi";
+import SimpleMenuCard from "../components/SimpleMenuCard.astro";
+
+// Fetch all menu items at build time
+const menu = await fetchStrapi<MenuItem>("menu-items");
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Our complete menu of delicious dishes" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Menu - Restaurant Name</title>
+  </head>
+  <body class="font-['Inter'] bg-slate-50">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center">
+            <a href="/" class="text-2xl font-bold text-primary-700">Restaurant Name</a>
+          </div>
+          <div class="hidden md:flex space-x-8">
+            <a
+              href="/"
+              class="text-primary-700 hover:text-accent-600 font-medium transition-colors"
+              >Home</a
+            >
+            <a
+              href="/menu"
+              class="text-accent-600 font-medium transition-colors"
+              >Menu</a
+            >
+            <a
+              href="/about"
+              class="text-primary-700 hover:text-accent-600 font-medium transition-colors"
+              >About</a
+            >
+            <a
+              href="/contact"
+              class="text-primary-700 hover:text-accent-600 font-medium transition-colors"
+              >Contact</a
+            >
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Menu Header -->
+    <section class="bg-gradient-to-br from-primary-700 to-primary-900 text-white py-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-5xl sm:text-6xl font-bold mb-6">Our Menu</h1>
+        <p class="text-xl text-slate-200 max-w-2xl mx-auto">
+          Explore our full selection of expertly crafted dishes, made fresh daily with the finest ingredients.
+        </p>
+      </div>
+    </section>
+
+    <!-- Full Menu Grid -->
+    <section class="py-20 bg-slate-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {menu?.data?.map((item) => <SimpleMenuCard item={item} />)}
+        </div>
+
+        {
+          !menu?.data?.length && (
+            <div class="text-center py-12">
+              <p class="text-gray-600 text-lg mb-4">
+                No menu items available at the moment.
+              </p>
+              <p class="text-gray-500">
+                Please check back soon or contact us for more information.
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-primary-800 text-white py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-2xl font-bold mb-4">Restaurant Name</h3>
+            <p class="text-slate-200">
+              Bringing delicious flavors and memorable experiences to your table.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-xl font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="/"
+                  class="text-slate-200 hover:text-accent-400 transition-colors"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/menu"
+                  class="text-slate-200 hover:text-accent-400 transition-colors"
+                  >Menu</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/about"
+                  class="text-slate-200 hover:text-accent-400 transition-colors"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/contact"
+                  class="text-slate-200 hover:text-accent-400 transition-colors"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-xl font-semibold mb-4">Contact Us</h4>
+            <p class="text-slate-200 mb-2">Email: info@restaurant.com</p>
+            <p class="text-slate-200 mb-2">Phone: (555) 123-4567</p>
+            <p class="text-slate-200">123 Main Street, City, ST 12345</p>
+          </div>
+        </div>
+        <div class="mt-8 pt-8 border-t border-primary-700 text-center">
+          <p class="text-slate-200">
+            &copy; 2026 Restaurant Name. All rights reserved.
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

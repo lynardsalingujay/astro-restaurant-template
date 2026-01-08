@@ -1,0 +1,178 @@
+# Astro Restaurant Template
+
+A production-ready, fully-featured Astro template for restaurant, cafe, bakery, and food business websites. Integrated with Strapi CMS for easy content management and built with Tailwind CSS for beautiful, responsive design.
+
+## ✨ Features
+
+- 🚀 **Astro 5+** - Lightning-fast static site generation
+- 🎨 **Tailwind CSS** - Beautiful, customizable styling
+- 📱 **Fully Responsive** - Works perfectly on all devices
+- 🔧 **Strapi CMS Integration** - Easy content management
+- 🖼️ **Build-time Image Optimization** - Images downloaded locally during build
+- 📄 **Multiple Pages** - Home, Menu, About, Contact
+- 📮 **Contact Form** - Formspree integration ready
+- 🎯 **SEO Ready** - Optimized for search engines
+- ⚡ **TypeScript Support** - Full type safety
+- 🎨 **Easy Customization** - Well-documented and themeable
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- Node.js 18+ installed
+- A Strapi CMS instance (see Strapi Setup below)
+
+### Installation
+
+1. **Clone this repository**
+   ```bash
+   git clone <your-repo-url>
+   cd astro-restaurant-template
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   
+   Create a `.env` file in the root directory:
+   ```env
+   PUBLIC_STRAPI_URL=https://your-strapi-instance.com
+   STRAPI_API_TOKEN=your-optional-api-token
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+   Visit `http://localhost:4321` to see your site!
+
+5. **Build for production**
+   ```bash
+   npm run build
+   ```
+
+   The static site will be generated in the `dist/` folder.
+
+6. **Preview the production build**
+   ```bash
+   npm run preview
+   ```
+
+## 📋 Strapi Setup
+
+This template requires a Strapi CMS instance with specific content types. See [STRAPI_SCHEMA.md](STRAPI_SCHEMA.md) for detailed setup instructions.
+
+### Quick Overview
+
+You need two content types in Strapi:
+
+1. **Homepage** (Single Type) - Contains hero section data
+2. **Menu Items** (Collection Type) - Contains restaurant menu items
+
+## 🎨 Customization
+
+See [CUSTOMIZATION.md](CUSTOMIZATION.md) for a complete guide on customizing:
+
+- Colors and branding
+- Fonts and typography
+- Content and copy
+- Images and media
+- Contact form setup
+
+## 📂 Project Structure
+
+```
+/
+├── public/
+│   └── placeholders/        # Example placeholder images
+├── src/
+│   ├── components/
+│   │   ├── Hero.astro       # Hero section component
+│   │   └── SimpleMenuCard.astro  # Menu item card component
+│   ├── lib/
+│   │   └── strapi.ts        # Strapi API integration
+│   └── pages/
+│       ├── index.astro      # Homepage
+│       ├── menu.astro       # Full menu page
+│       ├── about.astro      # About page
+│       ├── contact.astro    # Contact page
+│       └── debug.astro      # Strapi debug page (development)
+├── astro.config.mjs         # Astro configuration
+├── tailwind.config.mjs      # Tailwind CSS configuration
+├── package.json
+└── tsconfig.json
+```
+
+## 🌐 Pages
+
+- **/** - Homepage with hero, features, and menu preview
+- **/menu** - Full menu display with all items
+- **/about** - About page with restaurant story and values
+- **/contact** - Contact page with form and location info
+- **/debug** - Development page to debug Strapi API responses
+
+## 🔧 Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `PUBLIC_STRAPI_URL` | Yes | Your Strapi instance URL (e.g., `https://your-strapi.com`) |
+| `STRAPI_API_TOKEN` | No | API token if your Strapi requires authentication |
+
+## 📦 Build Process
+
+This template uses **Static Site Generation (SSG)**:
+
+1. During `npm run build`, all Strapi content is fetched
+2. Images are downloaded and saved to `public/uploads/`
+3. Static HTML is generated with embedded content
+4. The result is a completely static site in `dist/`
+5. **After deployment, Strapi can be offline** - the site is self-contained
+
+## 🚀 Deployment
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions for:
+
+- Vercel
+- Netlify
+- GitHub Pages
+- Other static hosting platforms
+
+## 📝 Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build locally
+- `npm run astro` - Run Astro CLI commands
+
+## 🤝 Contributing
+
+This is a template repository. Feel free to fork and customize for your own projects!
+
+## 📄 License
+
+This template is free to use for personal and commercial projects.
+
+## 🆘 Support
+
+- Check [CUSTOMIZATION.md](CUSTOMIZATION.md) for customization help
+- Review [STRAPI_SCHEMA.md](STRAPI_SCHEMA.md) for Strapi setup
+- See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment guidance
+
+## 🎯 Use Cases
+
+Perfect for:
+
+- Restaurants
+- Cafes
+- Bakeries
+- Food trucks
+- Catering services
+- Any food business website
+
+---
+
+**Ready to create your restaurant website?** Start by customizing the colors in `tailwind.config.mjs` and updating the content in the page files!
